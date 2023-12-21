@@ -1,0 +1,18 @@
+﻿@model List<SearchResult>
+
+@if (ViewBag.NoResultsMessage != null)
+{
+    <p class="text-center">@ViewBag.NoResultsMessage</p>
+}
+else
+{
+    @foreach (var result in Model)
+    {
+        <div class="result-card">
+            <img src="@result.ImageUrl" alt="Instagram Post" class="img-fluid mb-2">
+            <p>Caption: @result.Caption</p>
+            <p>Username: @result.Username</p>
+        </div>
+    }
+}
+

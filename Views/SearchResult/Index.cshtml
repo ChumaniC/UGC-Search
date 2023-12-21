@@ -1,0 +1,97 @@
+﻿@model List<SearchResult>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SocialSearchTool</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SocialSearchTool.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
+</head>
+<body>
+    <header>
+        <div class="search-box">
+            <form method="get" action="@Url.Action("Index", "SearchResult")" id="searchForm">
+                <input type="text" name="query" class="form-control p-3" placeholder="Search for user content..." />
+            </form>
+        </div>
+    </header>
+
+    <div class="search-results" id="searchResults">
+        @if (ViewBag.NoResultsMessage != null)
+        {
+            <p class="text-center">@ViewBag.NoResultsMessage</p>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var result in Model)
+                {
+                    <div class="col-md-6 result-card">
+                        <img src="@result.ImageUrl" alt="Instagram Post" class="img-fluid mb-2">
+                        <button class="btn btn-danger heart-btn" onclick="saveBookmark(@result.PostId, @result.SearchId)">
+                            <i class="bi bi-heart-fill"></i>
+                        </button>
+                        <button class="btn btn-close-white comment-btn">
+                            <i class="bi bi-chat-fill"></i>
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#query").on("keydown", function (e) {
+                // Check if the pressed key is Enter (key code 13)
+                if (e.which === 13) {
+                    // Prevent the default form submission
+                    e.preventDefault();
+
+                    // Perform asynchronous search
+                    performSearch();
+                }
+            });
+
+            // Separate function for handling the asynchronous search
+            function performSearch() {
+                var query = $("#query").val();
+
+                // Perform asynchronous search
+                $.get("/SearchResult/Search", { query: query }, function (data) {
+                    // Update the search results container
+                    $("#searchResults").html(data);
+                });
+            }
+        });
+    </script>
+
+    <script>
+        // Function to handle the click event of the heart icon button
+        function saveBookmark(postId, searchId) {
+            $.ajax({
+                type: "POST",
+                url: "/SearchResult/SaveBookmark",
+                data: { postId: postId, searchId: searchId },
+                success: function (result) {
+                    alert("Saved successfully!");
+                },
+                error: function (error) {
+                    alert("Error saving bookmark.");
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+﻿@{
+    ViewData["Title"] = "UGC Search";
+}
+
+<div class="text-center">
+    <form method="get" action="@Url.Action("Index", "SearchResult")" id="searchForm">
+        <input type="text" name="query" class="form-control p-3" placeholder="Search for user content..." />
+    </form>
+</div>
